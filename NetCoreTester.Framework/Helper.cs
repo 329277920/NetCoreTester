@@ -5,7 +5,7 @@ using System.Text;
 namespace NetCoreTester.Framework
 {
     public class Helper : IHelper
-    {
+    {        
         public int Idx = 0;
 
         public string ToBase64(string value)

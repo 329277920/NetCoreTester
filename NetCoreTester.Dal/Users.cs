@@ -16,6 +16,6 @@ namespace NetCoreTester.Dal
         public UserInfo GetUser(int userId)
         {
             return new UserInfo() { UserId = userId, UserName = _helper.ToBase64(userId.ToString()) };
-        }
+        }        
     }
 }

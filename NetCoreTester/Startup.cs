@@ -17,7 +17,7 @@ namespace NetCoreTester
     {
         public Startup(IConfiguration configuration)
         {
-            
+            Configuration = configuration;
         }
 
         public IConfiguration Configuration { get; }
@@ -35,6 +35,10 @@ namespace NetCoreTester
 
             // 注册业务层的所有服务（可通过反射配置）
             services.AddSingleton(typeof(NetCoreTester.Bll.Interfaces.IUser), typeof(NetCoreTester.Bll.Users));
+
+            // services.Configure<MyConfig>(Configuration);
+
+            // var cc = Configuration.Get<MyConfig>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -45,7 +49,7 @@ namespace NetCoreTester
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseMvc();
+            app.UseMvc();            
         }
     }
 }
