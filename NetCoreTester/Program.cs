@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 
 namespace NetCoreTester
 {
@@ -15,7 +16,7 @@ namespace NetCoreTester
     {
         public static void Main(string[] args)
         {
-
+             
 
             BuildWebHost(args).Run();
         }
@@ -39,6 +40,8 @@ namespace NetCoreTester
                     //config.SetBasePath(Directory.GetCurrentDirectory());
                     //config.AddJsonFile("Configs/config.json", false, true);
                     //config.AddJsonFile("Configs/json.json", false, true);
+                }).ConfigureLogging(log => {
+                    log.AddConsole();                    
                 })
                 .Build();
         }            

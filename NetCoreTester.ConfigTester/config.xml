@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<config>  
+  <version>v2.0</version>
+  <items>
+    <item>
+      <name>item3</name>
+      <url>http://3.com</url>
+    </item>
+  </items> 
+  <extend>1</extend>
+</config>

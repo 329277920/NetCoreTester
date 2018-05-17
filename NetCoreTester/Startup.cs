@@ -24,7 +24,7 @@ namespace NetCoreTester
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
-        {
+        {          
             services.AddMvc();
 
             // 注册框架的所有服务
@@ -47,8 +47,7 @@ namespace NetCoreTester
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-            }
-
+            }           
             app.UseMvc();            
         }
     }

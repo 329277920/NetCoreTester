@@ -1,0 +1,13 @@
+﻿{
+  "version": "v1.0",
+  "items": [
+    {
+      "name": "item1",
+      "url": "http://1.com"
+    },
+    {
+      "name": "item2",
+      "url": "http://2.com"
+    }
+  ]
+}
