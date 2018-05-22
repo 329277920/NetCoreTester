@@ -1,8 +1,11 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Hosting.Internal;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.Json;
 using Microsoft.Extensions.Configuration.Xml;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.PlatformAbstractions;
 using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json.Linq;
 using System;
@@ -10,6 +13,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
+
+ 
 
 namespace NetCoreTester.ConfigTester
 {
@@ -57,26 +62,104 @@ namespace NetCoreTester.ConfigTester
 
         static void Main(string[] args)
         {
-            var ss = new Regex(@"^/goods/m/recommend\?provinceid=[0-9]+&cityid=[0-9]+$").IsMatch("/goods/m/recommend?provinceid=10&cityid=60");
-
-            TestTry();
-
-            Console.ReadKey();
-
-            CopyTest();
-
-            JObject jobj = new JObject(new MYY() { Name = "CNF" });
-
-            Console.WriteLine(IsCustomType("1".GetType()));
-            Console.WriteLine(IsCustomType(1.GetType()));
-            Console.WriteLine(IsCustomType(typeof(MYY)));
-
-            Console.ReadKey();
             // Demo2();
-            Demo3();
+            // Demo3();
+            // Demo4();
+            // Demo5();
+            // Demo6();     
+
+            // 定义一个服务容器
+            var services = new ServiceCollection();
+
+            // 定义一个json配置源，并捕获变更
+            var source = new JsonConfigurationSource()
+            {
+                ReloadOnChange = true,
+                ReloadDelay = 100,
+                OnLoadException = (exceptionContext) =>
+                    Console.WriteLine(exceptionContext.Exception.Message),
+                Path = "config.json"                 
+            };          
+                      
+            var config = new ConfigurationBuilder().Add(source).Build();
+
+            using (config.GetReloadToken().RegisterChangeCallback((state) =>
+            {
+                var refConfig = state as IConfiguration;
+
+                var regConfig = refConfig.Get<ConfigInfo>();
+
+                services.AddSingleton(regConfig);
+
+            }, config)) { }
+               
+
+            // 注册一个继承了 IOptions<> 接口的成员，OptionsManager<>,用于读取配置
+            // services.AddOptions();
+
+            // 将配置信息绑定到 ConfigInfo
+            // services.Configure<ConfigInfo>(config);
+
+            var serviceProvider = services.BuildServiceProvider();
+
+            while (true)
+            {
+                // Console.WriteLine(serviceProvider.GetService<IOptions<ConfigInfo>>().Value.Version);
+                Console.WriteLine(serviceProvider.GetService<ConfigInfo>().Version);
+                Thread.Sleep(1000);
+            }
+
+            Console.ReadKey();
+        }
+
+        static void Demo4()
+        {
+            var builder = new ConfigurationBuilder().AddJsonFile("config.json").AddXmlFile("config.xml");
+            var config = builder.Build();
+            Console.WriteLine(config["version"]);
+            Console.WriteLine(config.GetSection("Items").GetChildren().ToArray()[0]["Name"]);
+            Console.WriteLine(config.GetSection("Items").GetChildren().ToArray()[1]["Name"]);
+            Console.WriteLine(config.GetSection("Items").GetChildren().ToArray()[2]["Name"]);            
+            for (var i = 0; i < 10; i++)
+            {
+                var info = config.Get<ConfigInfo>();
+                Console.WriteLine(info.InstanceCount);
+            }                      
+            Console.ReadKey();
+        }
+
+        static void Demo6()
+        {                            
+            var builder = new ConfigurationBuilder().AddJsonFile("appsettings.json");
+
+            var config = builder.Build();
+
             Console.ReadKey();
 
             
+        }
+
+        static void Demo5()
+        {          
+            var source = new JsonConfigurationSource()
+            {
+                Path = "config.json",
+                ReloadDelay = 100,
+                ReloadOnChange = true
+            };
+            var builder = new ConfigurationBuilder().Add(source);            
+            var config = builder.Build();
+            
+
+            var services = new ServiceCollection();
+            services.AddOptions();
+            services.Configure<ConfigInfo>(config);
+            var serviceProvider = services.BuildServiceProvider();
+            for (var i = 0; i < 10; i++)
+            {
+
+            }
+            serviceProvider.GetService<IOptions<ConfigInfo>>();
         }
 
         /// <summary>

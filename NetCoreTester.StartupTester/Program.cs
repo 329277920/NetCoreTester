@@ -7,6 +7,8 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Configuration.Json;
+
 
 namespace NetCoreTester.StartupTester
 {
@@ -19,6 +21,12 @@ namespace NetCoreTester.StartupTester
 
         public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
+                 .ConfigureAppConfiguration((context, config) =>
+                 {
+                     config.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+                     // 指示文件为可选的
+                     config.AddJsonFile($"appsettings.{context.HostingEnvironment.EnvironmentName}.json", optional: true, reloadOnChange: true);
+                 })
                 .UseStartup<Startup>()
                 .Build();
     }
